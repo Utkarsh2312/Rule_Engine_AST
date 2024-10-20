@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - '5000:5000'
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://127.0.0.1:27017/ruleEngine  # MongoDB connection string
+    volumes:
+      - ./server:/usr/src/app  # Mount the server code for local development
+    depends_on:
+      - mongo  # Ensure the MongoDB service starts before the server
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - '80:80'
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'  # Expose MongoDB port
+    volumes:
+      - mongo-data:/data/db  # Persist data in a named volume
+
+volumes:
+  mongo-data:  # Define the volume to persist MongoDB data
